@@ -3,7 +3,7 @@ name: update-dashboard
 on:
   schedule:
     - cron: "*/15 * * * *"
-  workflow_dispatch:           
+  workflow_dispatch:
   push:
     branches: [main]
     paths: ["ssf_list.txt", "template/**", "build_site.py", "fetch_ca.py"]
@@ -37,7 +37,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/set_ca.csv
+          if [ -f data/set_ca.csv ]; then
+            git add data/set_ca.csv
+          elif [ -f set_ca.csv ]; then
+            git add set_ca.csv
+          fi
           git diff --cached --quiet || (git commit -m "update data [skip ci]" && git push)
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
